@@ -1,0 +1,493 @@
+/*TRABAJO PRACTICO SQL*/
+
+
+
+
+
+
+CREATE TABLE documentos (
+   cod_documento INT PRIMARY KEY,
+   descripcion VARCHAR (100)
+	);
+CREATE TABLE oficinas (
+   cod_oficina INT PRIMARY KEY,
+	cod_director INT,
+	descripcion VARCHAR (100)
+	);
+CREATE TABLE empleados (
+   cod_empleado INT  PRIMARY KEY,
+   apellido VARCHAR (30),
+   nombre VARCHAR (30),
+   fecha_nacimiento DATE,
+   num_doc INT,
+   cod_jefe INT ,
+   cod_oficina INT,
+   cod_documento INT
+	);
+CREATE TABLE datos_contratos (
+   cod_empleado INT,
+   fecha_contrato DATE,
+   cuota DECIMAL (10, 2),
+   ventas INT,
+   PRIMARY KEY (cod_empleado,fecha_contrato)
+   );
+CREATE TABLE fabricantes (
+   cod_fabricante INT PRIMARY KEY,
+   razon_social VARCHAR (100)
+   );
+CREATE TABLE listas (
+   cod_lista INT PRIMARY KEY, 
+   descripcion VARCHAR (100),
+   ganancia DECIMAL (10,2)
+   );
+CREATE TABLE productos(
+   cod_producto INT PRIMARY KEY,
+   descripcion VARCHAR (100),
+   precio DECIMAL (10,2),
+   cantidad_stock INT,
+   punto_reposicion INT,
+   cod_fabricante INT
+	);
+CREATE TABLE precios(
+   cod_producto INT,
+   cod_lista INT,
+   precio DECIMAL (10,2),
+   PRIMARY KEY (cod_producto,cod_lista)
+   );
+CREATE TABLE clientes (
+   cod_cliente INT PRIMARY KEY,
+   cod_lista INT,
+   razon_social VARCHAR (100)
+   );
+CREATE TABLE pedidos (
+   cod_pedido INT PRIMARY KEY,
+   fecha_pedido DATE,
+   cod_empleado INT,
+   cod_cliente INT
+   );
+CREATE TABLE detalle_pedidos(
+   cod_pedido INT,
+   numero_linea INT,
+   cod_producto INT,
+   cantidad INT,
+   PRIMARY KEY (cod_pedido,numero_linea)
+   );
+
+DROP TABLE IF EXISTS detalle_pedidos;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS clientes;
+DROP TABLE IF EXISTS precios;
+DROP TABLE IF EXISTS productos;
+DROP TABLE IF EXISTS listas;
+DROP TABLE IF EXISTS fabricantes;
+DROP TABLE IF EXISTS datos_contratos;
+DROP TABLE IF EXISTS empleados;
+DROP TABLE IF EXISTS oficinas;
+DROP TABLE IF EXISTS documentos;
+
+
+/*INGRESO DE DATOS*/
+
+-- documentos
+INSERT INTO documentos (cod_documento, descripcion) VALUES
+(101, 'DNI'),
+(102, 'Pasaporte'),
+(103, 'Cédula de identidad');
+
+-- oficinas
+INSERT INTO oficinas (cod_oficina, cod_director, descripcion) VALUES
+(101, 201, 'Oficina Central'),
+(102, 202, 'Sucursal Norte'),
+(103, 203, 'Sucursal Sur');
+
+-- empleados
+INSERT INTO empleados (cod_empleado, apellido, nombre, fecha_nacimiento, num_doc, cod_jefe, cod_oficina, cod_documento) VALUES
+(201, 'Pérez', 'Juan', '1980-05-20', 12345678, NULL, 101, 101),
+(202, 'Gómez', 'Ana', '1985-08-15', 87654321, 201, 101, 101),
+(203, 'López', 'Carlos', '1990-11-02', 11223344, 201, 102, 102),
+(204, 'Martínez', 'Lucía', '1992-03-10', 55667788, 202, 103, 101),
+(205, 'Alvarez', 'Maria', '1995-05-12', 77889911, 201, 104, 103);
+
+-- datos_contratos
+INSERT INTO datos_contratos (cod_empleado, fecha_contrato, cuota, ventas) VALUES
+(201, '2000-01-10', 150000.00, 10),
+(202, '2021-06-15', 45000.00, 15),
+(203, '2010-09-30', 60000.00, 8),
+(204, '2022-02-20', 9000.00, 12);
+
+-- fabricantes
+INSERT INTO fabricantes (cod_fabricante, razon_social) VALUES
+(101, 'Fabricante Alfa'),
+(102, 'Fabricante Beta'),
+(103, 'Fabricante Gamma');
+
+-- listas
+INSERT INTO listas (cod_lista, descripcion, ganancia) VALUES
+(101, 'Lista General', 0.10),
+(102, 'Lista Mayorista', 0.15);
+
+-- productos
+INSERT INTO productos (cod_producto, descripcion, precio, cantidad_stock, punto_reposicion, cod_fabricante) VALUES
+(201, 'Dulce de Leche', 100.00, 50, 10, 101),
+(202, 'Yogurt', 200.00, 30, 5, 102),
+(203, 'Manteca', 150.00, 7, 8, 103);
+DELETE FROM productos;
+
+-- precios
+INSERT INTO precios (cod_producto, cod_lista, precio) VALUES
+(201, 101, 110.00),
+(201, 102, 115.00),
+(202, 101, 210.00),
+(202, 102, 220.00),
+(203, 101, 160.00),
+(203, 102, 170.00);
+
+-- clientes
+INSERT INTO clientes (cod_cliente, cod_lista, razon_social) VALUES
+(301, 101, 'Marta Alvarez'),
+(302, 102, 'Juan Albornoz'),
+(303, 101, 'Armando Paredes');
+
+-- pedidos
+INSERT INTO pedidos (cod_pedido, fecha_pedido, cod_empleado, cod_cliente) VALUES
+(401, '2023-03-04', 201, 301),
+(402, '2023-04-05', 202, 302),
+(403, '2023-05-01', 203, 303),
+(404, '2023-06-03', 204, 302),
+(405, '2023-07-05', 205, 301);
+
+
+-- detalle_pedidos
+INSERT INTO detalle_pedidos (cod_pedido, numero_linea, cod_producto, cantidad) VALUES
+(401, 1, 201, 5),
+(402, 2, 203, 2),
+(403, 1, 202, 1),
+(404, 1, 201, 10),
+(405, 2, 202, 3);
+
+
+SELECT *
+FROM empleados;
+SELECT *
+FROM documentos;
+SELECT *
+FROM oficinas;
+SELECT *
+FROM datos_contratos;
+SELECT *
+FROM fabricantes;
+SELECT *
+FROM listas;
+SELECT *
+FROM productos;
+SELECT *
+FROM precios;
+SELECT *
+FROM clientes;
+SELECT *
+FROM pedidos;
+SELECT *
+FROM detalle_pedidos;
+
+
+
+/*CONSULTAS*/
+
+
+
+
+-- PUNTO 1
+
+SELECT *
+FROM oficinas; 
+
+
+-- PUNTO 2
+SELECT descripcion, precio AS precio_costo,ROUND(precio * 1.21, 2) AS precio_con_iva
+FROM productos;
+
+-- PUNTO 3
+SELECT nombre, apellido, fecha_nacimiento AS cumpleaños, TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad
+FROM empleados;
+
+-- PUNTO 4
+SELECT nombre AS empleado
+FROM empleados
+WHERE cod_jefe IS NOT  NULL;
+
+-- PUNTO 5
+SELECT nombre
+FROM empleados
+WHERE nombre = 'maria'
+ORDER BY apellido;
+
+-- PUNTO 6
+SELECT *
+FROM clientes 
+WHERE razon_social LIKE 'L%'
+ORDER BY cod_cliente;
+
+-- PUNTO 7
+SELECT *
+FROM pedidos
+WHERE month(fecha_pedido) = 3
+ORDER BY fecha_pedido;
+
+
+-- PUNTO 8
+SELECT *
+FROM oficinas
+WHERE cod_director IS NULL;
+
+-- PUNTO 9
+SELECT descripcion 
+FROM productos
+ORDER BY precio asc
+LIMIT 4;
+
+-- PUNTO 10
+SELECT cod_empleado
+FROM datos_contratos
+ORDER BY cuota DESC
+LIMIT 3;
+
+
+/*CONSULTAS MULTITABLA*/
+
+
+
+-- PUNTO 1
+SELECT productos.descripcion, fabricantes.razon_social, productos.cantidad_stock
+FROM productos
+INNER JOIN fabricantes
+ON productos.cod_fabricante = fabricantes.cod_fabricante
+ORDER BY fabricantes.razon_social, productos.descripcion;
+
+-- PUNTO 2
+SELECT pedidos.cod_pedido, pedidos.fecha_pedido, empleados.apellido, clientes.razon_social
+FROM pedidos
+INNER JOIN empleados
+ON pedidos.cod_empleado = empleados.cod_empleado
+INNER JOIN clientes
+ON pedidos.cod_cliente = clientes.cod_cliente;
+
+-- PUNTO 3
+SELECT empleados.apellido, datos_contratos.cuota AS Sueldo, oficinas.descripcion
+FROM empleados
+INNER JOIN datos_contratos
+ON empleados.cod_empleado = datos_contratos.cod_empleado
+INNER JOIN oficinas
+ON empleados.cod_oficina = oficinas.cod_oficina
+ORDER BY datos_contratos.cuota DESC;
+
+-- PUNTO 4
+SELECT clientes.razon_social, pedidos.fecha_pedido
+FROM clientes 
+INNER JOIN pedidos
+ON clientes.cod_cliente = pedidos.cod_cliente
+where MONTH(fecha_pedido) = 4;
+
+-- PUNTO 5
+SELECT productos.descripcion, pedidos.fecha_pedido
+FROM productos
+INNER JOIN detalle_pedidos
+ON productos.cod_producto = detalle_pedidos.cod_producto
+INNER JOIN pedidos
+ON detalle_pedidos.cod_pedido = pedidos.cod_pedido
+WHERE MONTH (fecha_pedido) = 3;
+
+-- PUNTO 6
+SELECT empleados.nombre, empleados.apellido, TIMESTAMPDIFF(YEAR, datos_contratos.fecha_contrato, CURDATE()) AS cantidadAños
+FROM empleados
+INNER JOIN datos_contratos
+ON empleados.cod_empleado = datos_contratos.cod_empleado
+WHERE TIMESTAMPDIFF (YEAR, datos_contratos.fecha_contrato, CURDATE()) > 10
+ORDER BY cantidadAños DESC;
+
+
+-- PUNTO 7
+SELECT clientes.razon_social AS nombre, listas.descripcion AS tipoLista
+FROM clientes
+INNER JOIN listas
+ON clientes.cod_lista = listas.cod_lista
+WHERE descripcion = 'lista mayorista'
+ORDER BY clientes.razon_social;
+
+-- PUNTO 8
+SELECT productos.descripcion AS Producto, clientes.razon_social AS Cliente
+FROM productos
+INNER JOIN detalle_pedidos
+ON productos.cod_producto = detalle_pedidos.cod_producto
+INNER JOIN pedidos
+ON detalle_pedidos.cod_pedido = pedidos.cod_pedido
+INNER JOIN clientes
+ON pedidos.cod_cliente = clientes.cod_cliente
+ORDER BY clientes.razon_social, productos.descripcion;
+
+-- PUNTO 9
+
+SELECT productos.descripcion, (productos.punto_reposicion - productos.cantidad_stock) AS Cantidad_A_Comprar, fabricantes.razon_social
+FROM productos
+INNER JOIN fabricantes
+ON productos.cod_fabricante = fabricantes.cod_fabricante
+WHERE cantidad_stock < punto_reposicion
+ORDER BY fabricantes.razon_social, productos.descripcion
+
+-- PUNTO 10
+SELECT empleados.apellido, empleados.nombre, datos_contratos.cuota AS Sueldo
+FROM empleados
+INNER JOIN datos_contratos
+ON empleados.cod_empleado = datos_contratos.cod_empleado
+WHERE datos_contratos.cuota < 50000
+or datos_contratos.cuota > 100000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*PARTE B DEL TRABAJO*/
+
+-- Tabla de clientes
+CREATE TABLE clien (
+   codigo_cliente INT PRIMARY KEY,
+   nombre VARCHAR(100),
+   domicilio VARCHAR(150),
+   provincia VARCHAR(50)
+);
+
+-- Tabla de productos
+CREATE TABLE produc (
+   codigo_producto INT PRIMARY KEY,
+   nombre_producto VARCHAR(100)
+);
+
+-- Tabla de ventas
+CREATE TABLE ventas (
+   numero_factura INT PRIMARY KEY,
+   codigo_cliente INT,
+   fecha DATE
+);
+
+-- Tabla de ítems de ventas
+CREATE TABLE item_ventas (
+   numero_factura INT,
+   codigo_producto INT,
+   cantidad INT,
+   precio DECIMAL(10,2),
+   PRIMARY KEY (numero_factura, codigo_producto)
+);
+
+
+/*INGRESO DE DATOS*/
+
+INSERT INTO clien (codigo_cliente, nombre, domicilio, provincia) VALUES
+(100, 'Distribuidora Litoral', 'Av. San Martín 123', 'Santa Fe'),
+(101, 'Mayorista Norte', 'Calle 9 de Julio 456', 'Tucumán'),
+(102, 'Almacén Central', 'Ruta 34 Km 45', 'Salta'),
+(103, 'Supermercado Eco', 'Av. Rivadavia 2000', 'Buenos Aires');
+
+INSERT INTO produc (codigo_producto, nombre_producto) VALUES
+(200, 'Aceite de Girasol 1L'),
+(201, 'Yerba Mate 1Kg'),
+(202, 'Fideos Spaghetti 500g'),
+(203, 'Azúcar 1Kg'),
+(204, 'Harina 000 1Kg');
+
+
+INSERT INTO ventas (numero_factura, codigo_cliente, fecha) VALUES
+(3000, 100, '2024-03-15'),
+(3001, 101, '2024-03-20'),
+(3002, 102, '2024-04-02'),
+(3003, 100, '2024-04-15'),
+(3004, 103, '2024-05-05');
+
+
+INSERT INTO item_ventas (numero_factura, codigo_producto, cantidad, precio) VALUES
+(3000, 200, 10, 250.00),
+(3000, 202, 15, 120.00),
+(3001, 201, 20, 550.00),
+(3002, 203, 30, 180.00),
+(3002, 204, 25, 160.00),
+(3003, 200, 5, 250.00),
+(3004, 201, 10, 550.00),
+(3004, 204, 15, 160.00);
+
+SELECT * 
+FROM clien;
+SELECT*
+FROM produc;
+SELECT *
+FROM ventas;
+SELECT *
+FROM item_ventas;
+
+
+
+/*CONSULTAS*/
+
+
+-- PUNTO 1
+SELECT item_ventas.cantidad AS Cantidad_Maxima, produc.nombre_producto AS producto
+FROM item_ventas
+INNER JOIN produc
+ON item_ventas.codigo_producto = produc.codigo_producto
+ORDER BY item_ventas.cantidad DESC
+LIMIT 1;
+
+
+-- PUNTO 2
+SELECT SUM(cantidad) AS Cantidad_Vendida, produc.nombre_producto
+FROM item_ventas
+INNER JOIN produc
+ON item_ventas.codigo_producto = produc.codigo_producto
+WHERE item_ventas.codigo_producto = 202;
+   
+
+-- PUNTO 3
+SELECT item_ventas.cantidad AS Cantidad_Vendida, produc.nombre_producto
+FROM item_ventas
+INNER JOIN produc
+ON item_ventas.codigo_producto = produc.codigo_producto
+ORDER BY item_ventas.cantidad DESC;
+
+-- PUNTO 4
+SELECT 
+   produc.nombre_producto,
+   SUM(item_ventas.cantidad) AS total_unidades
+FROM item_ventas
+INNER JOIN produc
+ON item_ventas.codigo_producto = produc.codigo_producto
+GROUP BY produc.nombre_producto
+HAVING total_unidades > 30
+ORDER BY produc.nombre_producto;
+
+
+-- PUNTO 5
+SELECT 
+   clien.codigo_cliente,
+   clien.nombre,
+   COUNT(ventas.numero_factura) AS cantidad_compras
+FROM ventas
+INNER JOIN clien
+ON ventas.codigo_cliente = clien.codigo_cliente
+GROUP BY clien.codigo_cliente, clien.nombre
+ORDER BY cantidad_compras DESC;
+
+
+-- PUNTO 6
+SELECT 
+   item_ventas.codigo_producto,
+   AVG(item_ventas.cantidad) AS promedio_unidades
+FROM ventas
+INNER JOIN item_ventas
+ON ventas.numero_factura = item_ventas.numero_factura
+WHERE ventas.codigo_cliente = 1
+GROUP BY item_ventas.codigo_producto;
